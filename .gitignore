@@ -1,0 +1,26 @@
+# cf CLI local cache (holds the account id)
+/.cloudflare/
+
+# local mirror + sync state
+/data/
+
+# worker / cf
+worker/node_modules/
+worker/dist/
+worker/.cloudflare/
+worker/.wrangler/
+worker/.dev.vars*
+worker/.env*
+worker/*.log
+
+# secrets handed to `cf deploy`
+secrets.json
+secrets.env
+worker/.secrets.json
+worker/.secrets.env
+
+# go
+tui/oshiete
+tui/oshiete.exe
+
+.DS_Store

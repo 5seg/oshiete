@@ -1,0 +1,25 @@
+#!/bin/sh
+# Run the `cf` CLI against this repo from a glibc container.
+#
+# workerd ships as a glibc binary and segfaults under musl/gcompat, which takes
+# `cf build`, `cf dev` and `cf workers types` down with it. Everything on the
+# Cloudflare side therefore runs in Debian instead. The project and the CLI's own
+# auth config are bind-mounted at the same paths as on the host, so the command
+# line and config files are identical to a native run.
+set -e
+
+REPO=$(cd "$(dirname "$0")/.." && pwd)
+CFG="${HOME}/.config/cloudflare"
+
+TTY=""
+[ -t 0 ] && TTY="-t"
+
+exec docker run --rm -i $TTY \
+	--user "$(id -u):$(id -g)" \
+	-e HOME="${HOME}" \
+	-v "${REPO}:${REPO}" \
+	-v "${CFG}:${CFG}" \
+	--network host \
+	-w "${REPO}/worker" \
+	${OSHIETE_CF_IMAGE:-node:22-bookworm} \
+	npx --yes cf "$@"
